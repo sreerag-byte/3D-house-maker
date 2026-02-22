@@ -5,18 +5,15 @@ import {
   Box, 
   Maximize, 
   Layers, 
-  Eye, 
-  EyeOff,
-  Zap,
   Activity,
   Download,
   Share2,
   Palette,
   Sparkles,
-  Smile,
-  Coffee,
-  Heart,
-  Grid
+  Grid,
+  Cpu,
+  Terminal,
+  Settings
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -32,12 +29,13 @@ interface ControlPanelProps {
 }
 
 const logs = [
-  "Waking up the magic...",
-  "Finding the walls...",
-  "Painting with 3D pixels...",
-  "Adding a pinch of love...",
-  "Ready for you!",
-  "Sparkling up the view...",
+  "INITIALIZING_NEURAL_WEIGHTS...",
+  "PARSING_GEOMETRY_DATA...",
+  "OPTIMIZING_MESH_TOPOLOGY...",
+  "CALCULATING_LIGHT_BOUNCES...",
+  "SYSTEM_READY_FOR_INTERACTION",
+  "EXPORT_BUFFER_CLEARED",
+  "UPDATING_VIEWPORT_STATE...",
 ];
 
 export function ControlPanel({ config, setConfig }: ControlPanelProps) {
@@ -46,8 +44,8 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       const randomLog = logs[Math.floor(Math.random() * logs.length)];
-      setActiveLogs(prev => [randomLog, ...prev].slice(0, 5));
-    }, 4000);
+      setActiveLogs(prev => [randomLog, ...prev].slice(0, 8));
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -56,112 +54,110 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
   };
 
   return (
-    <aside className="w-96 h-full flex flex-col gap-8 z-40 overflow-hidden">
-      {/* Main Controls */}
-      <div className="glass-panel rounded-[3rem] p-10 deep-depth border-white/60">
-        <div className="flex items-center gap-4 mb-10">
-          <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center shadow-lg">
-            <Smile className="text-white w-7 h-7" />
+    <aside className="w-80 h-full flex flex-col gap-4 z-40 overflow-hidden font-mono">
+      {/* Parameters Panel */}
+      <div className="bg-[#121214] border border-white/5 rounded-lg p-6 flex flex-col">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-8 h-8 rounded bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+            <Settings className="text-orange-500 w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-2xl font-display font-black text-amber-900 tracking-tight">Magic Wand</h3>
-            <p className="text-[10px] font-bold text-amber-900/40 uppercase tracking-widest">Tweak your view</p>
+            <h3 className="text-xs font-bold text-white tracking-widest uppercase">Parameters</h3>
+            <p className="text-[8px] text-white/20 tracking-widest uppercase">Render_Configuration</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <FeatureItem 
             icon={Sun} 
-            label="Sunlight" 
+            label="SUNLIGHT" 
             active={config.daylight} 
             onClick={() => toggleConfig('daylight')} 
           />
           <FeatureItem 
             icon={Grid} 
-            label="Skeleton" 
+            label="WIREFRAME" 
             active={config.wireframe} 
             onClick={() => toggleConfig('wireframe')} 
           />
           <FeatureItem 
             icon={Moon} 
-            label="Shadows" 
+            label="SHADOWS" 
             active={config.shadows} 
             onClick={() => toggleConfig('shadows')} 
           />
           <FeatureItem 
             icon={Maximize} 
-            label="Flat View" 
+            label="ORTHO" 
             active={config.ortho} 
             onClick={() => toggleConfig('ortho')} 
           />
           <FeatureItem 
             icon={Palette} 
-            label="Colors" 
+            label="MATERIALS" 
             active={config.materials} 
             onClick={() => toggleConfig('materials')} 
           />
           <FeatureItem 
             icon={Sparkles} 
-            label="Glow" 
+            label="AMBIENT" 
             active={config.ambient} 
             onClick={() => toggleConfig('ambient')} 
           />
         </div>
 
-        <div className="mt-10 space-y-4">
-          <button className="w-full py-5 bg-amber-900 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-colors shadow-lg flex items-center justify-center gap-3">
-            <Download className="w-4 h-4" />
-            Save as .GLB
+        <div className="mt-8 space-y-2">
+          <button className="w-full h-10 bg-orange-500 text-black text-[10px] font-bold uppercase tracking-widest rounded hover:bg-orange-400 transition-colors flex items-center justify-center gap-2">
+            <Download className="w-3.5 h-3.5" />
+            EXPORT_.GLB
           </button>
-          <button className="w-full py-5 bg-white text-amber-900 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-amber-50 transition-colors deep-depth flex items-center justify-center gap-3">
-            <Share2 className="w-4 h-4" />
-            Share Link
+          <button className="w-full h-10 bg-white/5 border border-white/5 text-white/60 text-[10px] font-bold uppercase tracking-widest rounded hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+            <Share2 className="w-3.5 h-3.5" />
+            SHARE_LINK
           </button>
         </div>
       </div>
 
-      {/* Stats/Log Panel */}
-      <div className="flex-1 glass-panel rounded-[3rem] p-10 deep-depth border-white/60 flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between mb-8">
+      {/* Terminal/Log Panel */}
+      <div className="flex-1 bg-[#121214] border border-white/5 rounded-lg p-6 flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Activity className="w-5 h-5 text-orange-500" />
-            <h4 className="text-sm font-black text-amber-900 uppercase tracking-widest">What's Happening</h4>
+            <Terminal className="w-4 h-4 text-orange-500" />
+            <h4 className="text-[10px] font-bold text-white tracking-widest uppercase">System_Logs</h4>
           </div>
-          <div className="px-3 py-1 bg-white/40 rounded-full">
-            <span className="text-[8px] font-black text-amber-900 uppercase tracking-widest">Live</span>
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[8px] font-bold text-white/20 tracking-widest uppercase">LIVE</span>
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">
           <AnimatePresence mode="popLayout">
             {activeLogs.map((log, i) => (
               <motion.div
                 key={log + i}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="flex gap-4 group"
+                exit={{ opacity: 0, x: 5 }}
+                className="flex items-start gap-3"
               >
-                <div className="w-1 h-auto bg-orange-500/20 rounded-full group-hover:bg-orange-500 transition-colors" />
-                <div>
-                  <p className="text-xs font-bold text-amber-900 leading-relaxed">{log}</p>
-                  <p className="text-[9px] font-bold text-amber-900/20 uppercase tracking-widest mt-1">Just now</p>
-                </div>
+                <span className="text-orange-500/40 text-[9px] mt-0.5">{">"}</span>
+                <p className="text-[9px] font-medium text-white/40 leading-tight tracking-tight break-all">{log}</p>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-amber-900/10">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-black text-amber-900/40 uppercase tracking-widest">Magic Level</span>
-            <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">99%</span>
+        <div className="mt-6 pt-6 border-t border-white/5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest">CPU_LOAD</span>
+            <span className="text-[8px] font-bold text-orange-500 tracking-widest">42%</span>
           </div>
-          <div className="h-2 bg-amber-900/5 rounded-full overflow-hidden p-0.5">
+          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
-              animate={{ width: '99%' }}
-              className="h-full bg-orange-500 rounded-full"
+              animate={{ width: '42%' }}
+              className="h-full bg-orange-500"
             />
           </div>
         </div>
@@ -175,19 +171,19 @@ function FeatureItem({ icon: Icon, label, active, onClick }: any) {
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center gap-3 p-6 rounded-[2rem] transition-all duration-500 group relative overflow-hidden",
+        "flex flex-col items-center justify-center gap-2 h-20 rounded border transition-all relative overflow-hidden",
         active 
-          ? "bg-orange-500 text-white shadow-lg scale-105" 
-          : "bg-white/40 text-amber-900/40 hover:bg-white hover:text-amber-900"
+          ? "bg-orange-500/10 border-orange-500/30 text-orange-500" 
+          : "bg-white/5 border-white/5 text-white/20 hover:bg-white/10 hover:text-white/40"
       )}
     >
-      <Icon className={cn("w-6 h-6 transition-transform duration-500", active ? "text-white" : "text-amber-900/40 group-hover:text-amber-900")} />
-      <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
+      <Icon className="w-4 h-4" />
+      <span className="text-[8px] font-bold uppercase tracking-widest">{label}</span>
       
       {active && (
         <motion.div 
           layoutId={`active-glow-${label}`}
-          className="absolute inset-0 bg-white/10 pointer-events-none"
+          className="absolute inset-0 bg-orange-500/5 pointer-events-none"
         />
       )}
     </button>

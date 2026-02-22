@@ -1,15 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   UploadCloud, 
-  FileText, 
-  CheckCircle2, 
-  AlertCircle, 
-  ArrowRight, 
-  Sparkles, 
-  Smile,
-  Heart,
-  Coffee,
-  Palette
+  Loader2,
+  Cpu,
+  Globe,
+  Binary
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -20,195 +15,145 @@ function cn(...inputs: ClassValue[]) {
 }
 
 interface UploadFormProps {
-  onUploadSuccess: (data: any) => void;
+  onUploadSuccess: (data?: any) => void;
 }
 
 export function UploadForm({ onUploadSuccess }: UploadFormProps) {
-  const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState(1);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0];
-    if (selected && selected.type.startsWith('image/')) {
-      setFile(selected);
-      setError(null);
-      setStep(2);
-    } else {
-      setError('Oops! Please pick a cool image file.');
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
     }
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
-    setIsUploading(true);
-    setStep(3);
-
-    // Simulate funky synthesis process
-    for (let i = 0; i <= 100; i += 2) {
-      setProgress(i);
-      await new Promise(r => setTimeout(r, 50));
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFiles(e.dataTransfer.files[0]);
     }
+  };
 
-    onUploadSuccess({
-      id: 'mock-id',
-      meshUrl: '/mock-mesh.glb',
-      metadata: { walls: 12, area: 150 }
-    });
+  const handleFiles = (file: File) => {
+    setIsUploading(true);
+    // Simulate upload
+    setTimeout(() => {
+      setIsUploading(false);
+      onUploadSuccess();
+    }, 2000);
   };
 
   return (
-    <div className="glass-panel rounded-[4rem] p-16 deep-depth border-white/60 relative overflow-hidden">
-      <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-3xl" />
-      
-      <div className="relative z-10 max-w-2xl mx-auto text-center">
+    <div className="w-full max-w-2xl font-mono">
+      <div className="mb-10">
+        <h2 className="text-4xl font-bold text-white tracking-tighter uppercase mb-2">Data_Ingestion</h2>
+        <p className="text-[9px] text-white/20 font-bold uppercase tracking-[0.4em]">Upload_Blueprints_For_Neural_Processing</p>
+      </div>
+
+      <div 
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        className={cn(
+          "relative h-96 rounded-lg border-2 border-dashed transition-all flex flex-col items-center justify-center p-12 overflow-hidden",
+          dragActive ? "border-orange-500 bg-orange-500/5" : "border-white/5 bg-[#121214]",
+          isUploading ? "pointer-events-none" : "cursor-pointer"
+        )}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <div className="absolute inset-0 technical-grid opacity-20" />
+        
+        <input 
+          ref={fileInputRef}
+          type="file" 
+          className="hidden" 
+          onChange={(e) => e.target.files?.[0] && handleFiles(e.target.files[0])}
+          accept="image/*"
+        />
+
         <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div
-              key="step1"
+          {!isUploading ? (
+            <motion.div 
+              key="idle"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.1 }}
-              className="space-y-12"
+              className="flex flex-col items-center text-center relative z-10"
             >
-              <div className="w-32 h-32 rounded-[2.5rem] bg-orange-500 flex items-center justify-center mx-auto shadow-xl animate-float">
-                <UploadCloud className="text-white w-16 h-16" />
+              <div className="w-20 h-20 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:border-orange-500/50 transition-all">
+                <UploadCloud className="w-10 h-10 text-white/20" />
               </div>
-              <div>
-                <h2 className="text-5xl font-display font-black text-amber-900 tracking-tight mb-4">Add New Space</h2>
-                <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">Pick a floor plan image to start the magic</p>
-              </div>
+              <p className="text-sm font-bold text-white/80 tracking-widest uppercase mb-2">Drop_Source_Files</p>
+              <p className="text-[10px] text-white/20 font-medium uppercase tracking-widest">Supports: JPG, PNG, PDF (MAX 50MB)</p>
               
-              <label className="block group cursor-pointer">
-                <div className="border-4 border-dashed border-amber-900/10 rounded-[3rem] p-16 transition-all group-hover:border-orange-500/40 group-hover:bg-white/40">
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center deep-depth group-hover:scale-110 transition-transform">
-                      <Smile className="text-orange-500 w-8 h-8" />
-                    </div>
-                    <p className="text-lg font-black text-amber-900">Drop your plan here or click to browse</p>
-                    <p className="text-[10px] font-bold text-amber-900/20 uppercase tracking-widest">PNG, JPG or SVG (Max 10MB)</p>
-                  </div>
-                </div>
-                <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
-              </label>
-            </motion.div>
-          )}
+              <div className="mt-12 flex items-center gap-4">
+                <div className="h-px w-12 bg-white/5" />
+                <span className="text-[8px] font-bold text-white/10 uppercase tracking-[0.5em]">OR</span>
+                <div className="h-px w-12 bg-white/5" />
+              </div>
 
-          {step === 2 && file && (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              className="space-y-12"
+              <button className="mt-12 px-8 py-3 bg-white/5 border border-white/10 text-[10px] font-bold text-white/60 tracking-widest uppercase hover:bg-white/10 hover:text-white transition-all rounded">
+                Browse_Local_Storage
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="uploading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center relative z-10"
             >
-              <div className="relative w-64 h-64 mx-auto rounded-[3rem] overflow-hidden deep-depth border-8 border-white">
-                <img 
-                  src={URL.createObjectURL(file)} 
-                  alt="Preview" 
-                  className="w-full h-full object-cover"
+              <div className="w-24 h-24 relative mb-8">
+                <div className="absolute inset-0 border-2 border-orange-500/20 rounded-full" />
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 border-2 border-t-orange-500 rounded-full"
                 />
-                <div className="absolute inset-0 bg-orange-500/20 mix-blend-overlay" />
-              </div>
-              
-              <div>
-                <h2 className="text-4xl font-display font-black text-amber-900 tracking-tight mb-2">{file.name}</h2>
-                <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">Looks great! Ready to build?</p>
-              </div>
-
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => setStep(1)}
-                  className="flex-1 py-6 bg-white text-amber-900 text-sm font-black uppercase tracking-widest rounded-3xl hover:bg-amber-50 transition-all deep-depth"
-                >
-                  Change it
-                </button>
-                <button 
-                  onClick={handleUpload}
-                  className="flex-[2] py-6 bg-amber-900 text-white text-sm font-black uppercase tracking-widest rounded-3xl hover:bg-orange-600 transition-all shadow-xl flex items-center justify-center gap-3"
-                >
-                  Build My Space
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-12"
-            >
-              <div className="relative w-48 h-48 mx-auto">
-                <svg className="w-full h-full rotate-[-90deg]">
-                  <circle
-                    cx="96"
-                    cy="96"
-                    r="80"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="12"
-                    className="text-amber-900/5"
-                  />
-                  <motion.circle
-                    cx="96"
-                    cy="96"
-                    r="80"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="12"
-                    strokeDasharray="502"
-                    animate={{ strokeDashoffset: 502 - (502 * progress) / 100 }}
-                    className="text-orange-500"
-                    strokeLinecap="round"
-                  />
-                </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl font-display font-black text-amber-900">{progress}%</span>
+                  <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
               </div>
-
-              <div className="space-y-4">
-                <h2 className="text-4xl font-display font-black text-amber-900 tracking-tight">Doing the Magic...</h2>
-                <div className="flex items-center justify-center gap-3">
-                  <Sparkles className="w-5 h-5 text-orange-500 animate-pulse" />
-                  <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">
-                    {progress < 25 && "Waking up the magic..."}
-                    {progress >= 25 && progress < 50 && "Finding the walls..."}
-                    {progress >= 50 && progress < 75 && "Painting with 3D pixels..."}
-                    {progress >= 75 && "Adding a pinch of love..."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                {[Sparkles, Palette, Coffee].map((Icon, i) => (
-                  <div key={i} className={cn(
-                    "p-6 rounded-3xl transition-all duration-500",
-                    progress > (i + 1) * 30 ? "bg-orange-500 text-white shadow-lg" : "bg-white/40 text-amber-900/20"
-                  )}>
-                    <Icon className="w-6 h-6 mx-auto" />
-                  </div>
-                ))}
+              <p className="text-xs font-bold text-orange-500 tracking-[0.3em] uppercase animate-pulse">Processing_Neural_Weights...</p>
+              <div className="mt-8 w-64 h-1 bg-white/5 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 2 }}
+                  className="h-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {error && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 p-4 bg-red-50 rounded-2xl flex items-center gap-3 text-red-600"
-          >
-            <AlertCircle className="w-5 h-5" />
-            <span className="text-xs font-bold uppercase tracking-widest">{error}</span>
-          </motion.div>
-        )}
+        {/* Corner Accents */}
+        <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-white/20" />
+        <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-white/20" />
+        <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-white/20" />
+        <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-white/20" />
+      </div>
+
+      <div className="mt-8 grid grid-cols-3 gap-4">
+        {[
+          { label: 'ENCRYPTION', status: 'AES-256' },
+          { label: 'VALIDATION', status: 'ACTIVE' },
+          { label: 'PARSER', status: 'v4.0' }
+        ].map((stat, i) => (
+          <div key={i} className="bg-white/5 border border-white/5 p-4 rounded flex flex-col gap-1">
+            <span className="text-[8px] font-bold text-white/20 tracking-widest uppercase">{stat.label}</span>
+            <span className="text-[10px] font-bold text-white/60 tracking-widest">{stat.status}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

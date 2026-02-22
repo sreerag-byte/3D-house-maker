@@ -1,37 +1,24 @@
-import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
-  Stage, 
+  PerspectiveCamera, 
   Environment, 
   ContactShadows, 
-  PerspectiveCamera, 
-  OrthographicCamera,
-  Float,
-  Stars,
-  Text,
-  Edges,
-  MeshDistortMaterial,
-  Html
+  Grid,
+  Center,
 } from '@react-three/drei';
 import * as THREE from 'three';
-import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Box, 
-  Compass as CompassIcon, 
   Maximize2, 
-  Layers,
-  Minimize2,
+  Compass, 
+  Layers, 
+  Box, 
+  Activity, 
   Zap,
-  Activity,
-  Cpu,
-  Crosshair,
-  RotateCw,
-  Move,
-  Scan,
   Sparkles,
-  Layout
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -39,206 +26,192 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface ViewerProps {
-  data: any | null;
-  config: any;
-}
-
-function ScanningEffect({ height }: { height: number }) {
-  const ref = useRef<THREE.Mesh>(null);
-  
-  useFrame(({ clock }) => {
-    if (ref.current) {
-      ref.current.position.y = (Math.sin(clock.getElapsedTime() * 1.5) * 0.5 + 0.5) * height;
-    }
-  });
-
+// Technical HUD Component
+function ViewerHUD({ config }: { config: any }) {
   return (
-    <mesh ref={ref} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[10, 10]} />
-      <meshBasicMaterial 
-        color="#FF8C42" 
-        transparent 
-        opacity={0.1} 
-        side={THREE.DoubleSide} 
-      />
-    </mesh>
-  );
-}
-
-function Model({ data, config }: ViewerProps) {
-  const meshRef = useRef<THREE.Group>(null);
-
-  // Mock architectural elements based on data
-  const elements = useMemo(() => {
-    if (!data) return [];
-    return [
-      { pos: [0, 1, 0], scale: [4, 2, 4], color: '#ffffff', label: 'Main Hall' },
-      { pos: [3, 0.75, 0], scale: [2, 1.5, 2], color: '#f8f8f8', label: 'Studio' },
-      { pos: [-3, 0.75, 0], scale: [2, 1.5, 2], color: '#f8f8f8', label: 'Gallery' },
-    ];
-  }, [data]);
-
-  return (
-    <group ref={meshRef}>
-      {elements.map((el, i) => (
-        <group key={i} position={el.pos as any}>
-          <mesh scale={el.scale as any}>
-            <boxGeometry />
-            {config.materials ? (
-              <meshStandardMaterial 
-                color={el.color} 
-                roughness={0.1} 
-                metalness={0.1}
-                transparent={config.wireframe}
-                opacity={config.wireframe ? 0.2 : 1}
-              />
-            ) : (
-              <meshNormalMaterial wireframe={config.wireframe} />
-            )}
-            {config.edges && <Edges color="#2D1B08" threshold={15} />}
-          </mesh>
+    <div className="absolute inset-0 pointer-events-none z-10 p-6 flex flex-col justify-between font-mono">
+      {/* Top HUD */}
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-4">
+          <motion.div 
+            initial={{ x: -10, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="bg-[#0A0A0B]/80 border border-white/10 px-4 py-2 rounded flex items-center gap-3"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+            <span className="text-[9px] font-bold text-white/80 tracking-widest uppercase">VIEWPORT_RENDER_ACTIVE</span>
+          </motion.div>
           
-          {config.labels && (
-            <Html distanceFactor={10} position={[0, el.scale[1] / 2 + 0.5, 0]} center>
-              <div className="px-4 py-2 bg-white rounded-xl border-2 border-[#2D1B08] shadow-lg whitespace-nowrap">
-                <span className="text-[10px] font-bold text-[#2D1B08] uppercase tracking-widest">{el.label}</span>
-              </div>
-            </Html>
-          )}
-        </group>
-      ))}
-      
-      {data && <ScanningEffect height={3} />}
-    </group>
-  );
-}
+          <div className="flex gap-2">
+            {[Compass, Layers, Box].map((Icon, i) => (
+              <motion.div
+                key={i}
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className="w-10 h-10 bg-[#0A0A0B]/80 border border-white/10 rounded flex items-center justify-center hover:bg-white/5 transition-colors pointer-events-auto cursor-pointer"
+              >
+                <Icon className="w-4 h-4 text-white/30" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
 
-function CompassHUD() {
-  const [rotation, setRotation] = useState(0);
+        <div className="flex flex-col items-end gap-2">
+          <motion.div 
+            initial={{ x: 10, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            className="bg-[#0A0A0B]/80 border border-white/10 px-4 py-2 rounded flex items-center gap-3"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+            <span className="text-[9px] font-bold text-white/80 tracking-widest uppercase">PRECISION_99.8%</span>
+          </motion.div>
+          <div className="text-[8px] text-white/20 tracking-widest uppercase">LATENCY: 12ms</div>
+        </div>
+      </div>
 
-  return (
-    <div className="absolute bottom-12 left-12 w-32 h-32 glass-panel rounded-full flex items-center justify-center cartoon-border">
-      <div className="relative w-full h-full flex items-center justify-center">
-        <div className="absolute inset-4 border-2 border-dashed border-[#2D1B08]/10 rounded-full" />
-        <motion.div 
-          animate={{ rotate: rotation }}
-          className="relative z-10"
-        >
-          <CompassIcon className="w-10 h-10 text-[#FF8C42]" />
-        </motion.div>
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-[#2D1B08] uppercase tracking-widest">North</div>
+      {/* Bottom HUD */}
+      <div className="flex justify-between items-end">
+        <div className="bg-[#0A0A0B]/80 border border-white/10 p-4 rounded flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            <Activity className="w-4 h-4 text-orange-500/60" />
+            <div>
+              <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">POLYGONS</p>
+              <p className="text-[10px] font-bold text-white/80 tracking-widest">124,502</p>
+            </div>
+          </div>
+          <div className="w-px h-6 bg-white/5" />
+          <div className="flex items-center gap-3">
+            <Zap className="w-4 h-4 text-orange-500/60" />
+            <div>
+              <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">ENGINE</p>
+              <p className="text-[10px] font-bold text-white/80 tracking-widest">NEURAL_v4</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button className="w-10 h-10 bg-[#0A0A0B]/80 border border-white/10 rounded flex items-center justify-center pointer-events-auto hover:bg-white/10 transition-colors">
+            <Maximize2 className="w-4 h-4 text-white/60" />
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-export function ThreeViewer({ data, config }: ViewerProps) {
-  const [isFullscreen, setIsFullscreen] = useState(false);
+// Technical Scene Component
+function Scene({ config }: { config: any }) {
+  const meshRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.001;
+    }
+  });
 
   return (
-    <div className={cn(
-      "relative w-full h-full transition-all duration-700 overflow-hidden",
-      isFullscreen ? "fixed inset-0 z-[100] bg-white" : "rounded-[4rem] glass-panel cartoon-border"
-    )}>
-      {/* Viewport Overlay */}
-      <div className="absolute inset-0 pointer-events-none z-10 p-12 flex flex-col justify-between">
-        <div className="flex items-start justify-between">
-          <div className="space-y-6">
-            <div className="flex items-center gap-4 px-6 py-3 bg-white rounded-2xl cartoon-border pointer-events-auto shadow-xl">
-              <div className="w-3 h-3 rounded-full bg-[#FF8C42] animate-pulse" />
-              <span className="text-xs font-bold text-[#2D1B08] uppercase tracking-widest">Studio View</span>
-            </div>
-            
-            <div className="flex flex-col gap-3 pointer-events-auto">
-              {[
-                { icon: RotateCw, label: 'Orbit' },
-                { icon: Move, label: 'Pan' },
-                { icon: Scan, label: 'Zoom' },
-              ].map((tool, i) => (
-                <button key={i} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-[#2D1B08]/40 hover:text-[#2D1B08] transition-all cartoon-border shadow-lg">
-                  <tool.icon className="w-6 h-6" />
-                </button>
-              ))}
-            </div>
-          </div>
+    <>
+      <PerspectiveCamera makeDefault position={[12, 12, 12]} fov={40} />
+      <OrbitControls 
+        makeDefault 
+        enableDamping 
+        dampingFactor={0.05}
+        minDistance={5}
+        maxDistance={50}
+      />
 
-          <div className="flex flex-col gap-4 pointer-events-auto">
-            <button 
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-[#2D1B08]/40 hover:text-[#2D1B08] transition-all cartoon-border shadow-lg"
-            >
-              {isFullscreen ? <Minimize2 className="w-6 h-6" /> : <Maximize2 className="w-6 h-6" />}
-            </button>
-            <button className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-[#2D1B08]/40 hover:text-[#2D1B08] transition-all cartoon-border shadow-lg">
-              <Layers className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
+      {/* Lighting */}
+      <ambientLight intensity={0.2} />
+      <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={1.5} castShadow />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} />
+      
+      <Environment preset="city" />
 
-        <div className="flex items-end justify-between">
-          <CompassHUD />
-          
-          <div className="flex flex-col gap-6 items-end pointer-events-auto">
-            <div className="glass-panel p-8 rounded-[2.5rem] cartoon-border flex flex-col gap-4 shadow-2xl">
-              <div className="flex items-center gap-4">
-                <Sparkles className="w-5 h-5 text-[#FF8C42]" />
-                <span className="text-[10px] font-bold text-[#2D1B08] uppercase tracking-widest">Organic Rendering</span>
-              </div>
-              <div className="h-1.5 w-48 bg-[#2D1B08]/5 rounded-full overflow-hidden cartoon-border p-0.5">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: '85%' }}
-                  className="h-full bg-[#2D1B08] rounded-full"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Scene Content */}
+      <Center top>
+        <group ref={meshRef}>
+          {/* Base Plate */}
+          <mesh castShadow receiveShadow>
+            <boxGeometry args={[10, 0.1, 14]} />
+            <meshStandardMaterial color="#121214" roughness={0.2} metalness={0.8} />
+          </mesh>
 
-      {/* 3D Canvas */}
-      <Canvas shadows dpr={[1, 2]}>
-        <color attach="background" args={['#fff9f5']} />
-        <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={[8, 8, 8]} fov={50} />
-          {config.ortho && <OrthographicCamera makeDefault position={[10, 10, 10]} zoom={50} />}
-          
-          <Stage environment="studio" intensity={0.5}>
-            <Model data={data} config={config} />
-          </Stage>
+          {/* Technical Grid Overlay on Mesh */}
+          <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[10, 14]} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0.05} wireframe />
+          </mesh>
 
-          {config.daylight && (
-            <>
-              <Environment preset="sunset" />
-              <directionalLight 
-                position={[10, 10, 5]} 
-                intensity={1} 
-                castShadow 
-                shadow-mapSize={[2048, 2048]}
+          {/* Mock Walls */}
+          {[
+            { pos: [0, 1.5, -7], size: [10, 3, 0.1] },
+            { pos: [0, 1.5, 7], size: [10, 3, 0.1] },
+            { pos: [-5, 1.5, 0], size: [0.1, 3, 14] },
+            { pos: [5, 1.5, 0], size: [0.1, 3, 14] },
+            { pos: [0, 1.5, 0], size: [0.1, 3, 4] },
+          ].map((wall, i) => (
+            <mesh key={i} position={wall.pos as any} castShadow receiveShadow>
+              <boxGeometry args={wall.size as any} />
+              <meshStandardMaterial 
+                color={config.materials ? "#fb923c" : "#ffffff"} 
+                wireframe={config.wireframe}
+                transparent
+                opacity={0.8}
+                metalness={0.5}
+                roughness={0.2}
               />
-            </>
-          )}
+            </mesh>
+          ))}
+        </group>
+      </Center>
 
-          <ContactShadows 
-            position={[0, -0.01, 0]} 
-            opacity={0.4} 
-            scale={20} 
-            blur={2} 
-            far={4.5} 
-          />
+      {/* Ground & Shadows */}
+      <Grid 
+        infiniteGrid 
+        fadeDistance={40} 
+        fadeStrength={5} 
+        cellSize={1} 
+        sectionSize={5} 
+        sectionColor="#ffffff" 
+        cellColor="#ffffff" 
+        sectionThickness={1}
+        cellThickness={0.5}
+      />
+      
+      <ContactShadows 
+        position={[0, -0.01, 0]} 
+        opacity={0.6} 
+        scale={30} 
+        blur={2.5} 
+        far={4} 
+      />
+    </>
+  );
+}
 
-          <OrbitControls 
-            makeDefault 
-            enableDamping 
-            dampingFactor={0.05}
-            minPolarAngle={0}
-            maxPolarAngle={Math.PI / 2}
-          />
-
-          {config.ambient && <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />}
+export function ThreeViewer({ data, config }: { data: any, config: any }) {
+  return (
+    <div className="w-full h-full relative bg-[#0A0A0B]">
+      {/* Technical Grid Background */}
+      <div className="absolute inset-0 technical-grid opacity-10 pointer-events-none" />
+      
+      <ViewerHUD config={config} />
+      
+      <Canvas shadows dpr={[1, 2]} gl={{ antialias: true }}>
+        <Suspense fallback={null}>
+          <Scene config={config} />
         </Suspense>
       </Canvas>
+
+      {/* Scanning Effect Overlay */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-20 opacity-[0.05]">
+        <motion.div 
+          animate={{ top: ['-100%', '200%'] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+          className="absolute left-0 right-0 h-40 bg-gradient-to-b from-transparent via-orange-500 to-transparent"
+        />
+      </div>
     </div>
   );
 }

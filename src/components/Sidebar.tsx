@@ -26,54 +26,54 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const navItems = [
-    { id: 'upload', icon: UploadCloud, label: 'Create' },
-    { id: 'viewer', icon: Sparkles, label: 'Studio' },
-    { id: 'projects', icon: FolderOpen, label: 'Archive' },
-    { id: 'settings', icon: Settings, label: 'Config' },
+    { id: 'upload', icon: UploadCloud, label: 'CREATE', desc: 'New Space' },
+    { id: 'chat', icon: Zap, label: 'AI CHAT', desc: 'Chat to Build' },
+    { id: 'collection', icon: Layout, label: 'GALLERY', desc: 'Perfect Plans' },
+    { id: 'viewer', icon: Sparkles, label: 'STUDIO', desc: 'Magic View' },
+    { id: 'projects', icon: FolderOpen, label: 'ARCHIVE', desc: 'Saved' },
   ];
 
   return (
-    <aside className="w-32 h-full flex flex-col items-center py-12 z-50 relative">
-      {/* Sidebar Panel */}
-      <div className="absolute inset-y-12 left-8 right-0 glass-panel rounded-[3rem] cartoon-border -z-10" />
-      
+    <aside className="w-20 h-full flex flex-col items-center py-6 z-50 relative bg-[#0A0A0B] border-r border-white/5">
       {/* Logo Area */}
-      <motion.div 
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        className="w-16 h-16 rounded-3xl bg-[#2D1B08] flex items-center justify-center mb-16 shadow-2xl cartoon-border cursor-pointer"
-      >
-        <Box className="w-8 h-8 text-white" />
-      </motion.div>
+      <div className="flex flex-col items-center mb-10 group cursor-pointer">
+        <motion.div 
+          whileHover={{ scale: 1.1 }}
+          className="w-12 h-12 rounded-lg bg-orange-500 flex items-center justify-center mb-2 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+        >
+          <Box className="w-6 h-6 text-black" />
+        </motion.div>
+      </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 flex flex-col gap-8">
+      {/* Main Navigation */}
+      <nav className="flex-1 flex flex-col gap-4 w-full px-2">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
-            <div key={item.id} className="relative group">
+            <div key={item.id} className="relative group flex flex-col items-center">
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveTab(item.id)}
                 className={cn(
-                  "w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-300 relative cartoon-border",
+                  "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 relative",
                   isActive 
-                    ? "bg-[#2D1B08] text-white shadow-xl" 
-                    : "bg-white text-[#2D1B08]/40 hover:text-[#2D1B08] hover:bg-white/80"
+                    ? "bg-white/10 text-orange-500 shadow-inner" 
+                    : "text-white/30 hover:text-white/60 hover:bg-white/5"
                 )}
               >
-                <item.icon className="w-7 h-7" />
+                <item.icon className="w-5 h-5" />
                 
                 {/* Tooltip */}
-                <div className="absolute left-full ml-6 px-4 py-2 bg-[#2D1B08] text-white text-[10px] font-bold uppercase tracking-widest rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap cartoon-border z-50">
-                  {item.label}
+                <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#18181B] text-white rounded border border-white/10 opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap z-50 shadow-2xl">
+                  <p className="text-[10px] font-mono font-bold tracking-widest">{item.label}</p>
                 </div>
               </motion.button>
               
               {isActive && (
                 <motion.div 
                   layoutId="active-indicator"
-                  className="absolute -left-2 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#2D1B08] rounded-full"
+                  className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"
                 />
               )}
             </div>
@@ -81,27 +81,39 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         })}
       </nav>
 
-      {/* Profile / Bottom Actions */}
-      <div className="mt-auto flex flex-col gap-8 items-center">
-        <div className="relative group">
+      {/* Secondary Actions & Profile */}
+      <div className="mt-auto flex flex-col gap-4 items-center w-full px-2">
+        {/* Settings Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setActiveTab('settings')}
+          className={cn(
+            "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 relative",
+            activeTab === 'settings'
+              ? "bg-white/10 text-orange-500"
+              : "text-white/30 hover:text-white/60 hover:bg-white/5"
+          )}
+        >
+          <Settings className="w-5 h-5" />
+        </motion.button>
+
+        {/* Profile */}
+        <div className="relative group w-10 h-10">
           <motion.div 
-            whileHover={{ scale: 1.1 }}
-            className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center cursor-pointer cartoon-border overflow-hidden"
+            whileHover={{ scale: 1.05 }}
+            className="w-full h-full rounded-lg bg-white/5 flex items-center justify-center cursor-pointer overflow-hidden border border-white/10"
           >
-            <img src="https://picsum.photos/seed/designer/64/64" alt="User" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <img src="https://picsum.photos/seed/designer/120/120" alt="User" className="w-full h-full object-cover opacity-80" referrerPolicy="no-referrer" />
           </motion.div>
-          
-          {/* Upgrade Badge */}
-          <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[#FF8C42] border-2 border-[#2D1B08] flex items-center justify-center shadow-lg">
-            <Sparkles className="w-4 h-4 text-[#2D1B08]" />
-          </div>
         </div>
 
+        {/* Logout */}
         <motion.button
-          whileHover={{ scale: 1.1, rotate: -5 }}
-          className="w-16 h-16 rounded-3xl bg-white/40 flex items-center justify-center text-[#2D1B08]/40 hover:text-[#2D1B08] transition-colors cartoon-border"
+          whileHover={{ scale: 1.05 }}
+          className="w-12 h-12 rounded-lg flex items-center justify-center text-white/20 hover:text-red-500/60 transition-all"
         >
-          <LogOut className="w-7 h-7" />
+          <LogOut className="w-5 h-5" />
         </motion.button>
       </div>
     </aside>
