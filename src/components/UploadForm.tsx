@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { 
   UploadCloud, 
   Loader2,
-  Cpu,
-  Globe,
-  Binary
+  Box,
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -52,10 +52,10 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
   };
 
   return (
-    <div className="w-full max-w-2xl font-mono">
-      <div className="mb-10">
-        <h2 className="text-4xl font-bold text-white tracking-tighter uppercase mb-2">Data_Ingestion</h2>
-        <p className="text-[9px] text-white/20 font-bold uppercase tracking-[0.4em]">Upload_Blueprints_For_Neural_Processing</p>
+    <div className="w-full max-w-2xl">
+      <div className="mb-10 text-center">
+        <h2 className="text-4xl font-bold text-gray-900 tracking-tighter mb-2">Upload Plan</h2>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Turn your sketches into 3D models</p>
       </div>
 
       <div 
@@ -64,14 +64,12 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
         onDragOver={handleDrag}
         onDrop={handleDrop}
         className={cn(
-          "relative h-96 rounded-lg border-2 border-dashed transition-all flex flex-col items-center justify-center p-12 overflow-hidden",
-          dragActive ? "border-orange-500 bg-orange-500/5" : "border-white/5 bg-[#121214]",
+          "relative h-[32rem] rounded-[3rem] border-4 border-dashed transition-all flex flex-col items-center justify-center p-12 overflow-hidden soft-shadow",
+          dragActive ? "border-orange-500 bg-orange-500/5 scale-[1.02]" : "border-gray-100 bg-white",
           isUploading ? "pointer-events-none" : "cursor-pointer"
         )}
         onClick={() => fileInputRef.current?.click()}
       >
-        <div className="absolute inset-0 technical-grid opacity-20" />
-        
         <input 
           ref={fileInputRef}
           type="file" 
@@ -89,20 +87,20 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
               exit={{ opacity: 0, scale: 1.1 }}
               className="flex flex-col items-center text-center relative z-10"
             >
-              <div className="w-20 h-20 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:border-orange-500/50 transition-all">
-                <UploadCloud className="w-10 h-10 text-white/20" />
+              <div className="w-24 h-24 rounded-3xl bg-gray-50 flex items-center justify-center mb-10 shadow-sm group-hover:scale-110 transition-transform">
+                <UploadCloud className="w-12 h-12 text-orange-500" />
               </div>
-              <p className="text-sm font-bold text-white/80 tracking-widest uppercase mb-2">Drop_Source_Files</p>
-              <p className="text-[10px] text-white/20 font-medium uppercase tracking-widest">Supports: JPG, PNG, PDF (MAX 50MB)</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Drop your plan here</h3>
+              <p className="text-sm text-gray-400 mb-12">Or click to browse your files</p>
               
-              <div className="mt-12 flex items-center gap-4">
-                <div className="h-px w-12 bg-white/5" />
-                <span className="text-[8px] font-bold text-white/10 uppercase tracking-[0.5em]">OR</span>
-                <div className="h-px w-12 bg-white/5" />
+              <div className="flex items-center gap-4 mb-12">
+                <div className="h-px w-12 bg-gray-100" />
+                <span className="text-[10px] font-bold text-gray-200 uppercase tracking-widest">OR</span>
+                <div className="h-px w-12 bg-gray-100" />
               </div>
 
-              <button className="mt-12 px-8 py-3 bg-white/5 border border-white/10 text-[10px] font-bold text-white/60 tracking-widest uppercase hover:bg-white/10 hover:text-white transition-all rounded">
-                Browse_Local_Storage
+              <button className="px-10 py-4 bg-gray-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-2xl shadow-xl hover:bg-gray-800 transition-all">
+                Select File
               </button>
             </motion.div>
           ) : (
@@ -112,46 +110,44 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
               animate={{ opacity: 1 }}
               className="flex flex-col items-center relative z-10"
             >
-              <div className="w-24 h-24 relative mb-8">
-                <div className="absolute inset-0 border-2 border-orange-500/20 rounded-full" />
+              <div className="w-24 h-24 relative mb-10">
+                <div className="absolute inset-0 border-4 border-orange-500/10 rounded-full" />
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 border-2 border-t-orange-500 rounded-full"
+                  className="absolute inset-0 border-4 border-t-orange-500 rounded-full"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
               </div>
-              <p className="text-xs font-bold text-orange-500 tracking-[0.3em] uppercase animate-pulse">Processing_Neural_Weights...</p>
-              <div className="mt-8 w-64 h-1 bg-white/5 rounded-full overflow-hidden">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Building your space...</h3>
+              <p className="text-sm text-gray-400">This will only take a moment</p>
+              <div className="mt-12 w-64 h-2 bg-gray-100 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: "100%" }}
                   transition={{ duration: 2 }}
-                  className="h-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                  className="h-full bg-orange-500"
                 />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Corner Accents */}
-        <div className="absolute top-4 left-4 w-4 h-4 border-t border-l border-white/20" />
-        <div className="absolute top-4 right-4 w-4 h-4 border-t border-r border-white/20" />
-        <div className="absolute bottom-4 left-4 w-4 h-4 border-b border-l border-white/20" />
-        <div className="absolute bottom-4 right-4 w-4 h-4 border-b border-r border-white/20" />
       </div>
 
-      <div className="mt-8 grid grid-cols-3 gap-4">
+      <div className="mt-12 grid grid-cols-3 gap-6">
         {[
-          { label: 'ENCRYPTION', status: 'AES-256' },
-          { label: 'VALIDATION', status: 'ACTIVE' },
-          { label: 'PARSER', status: 'v4.0' }
+          { icon: Box, label: '3D Model', value: 'High Quality' },
+          { icon: Sparkles, label: 'AI Engine', value: 'Smart v4' },
+          { icon: Globe, label: 'Export', value: 'Ready' }
         ].map((stat, i) => (
-          <div key={i} className="bg-white/5 border border-white/5 p-4 rounded flex flex-col gap-1">
-            <span className="text-[8px] font-bold text-white/20 tracking-widest uppercase">{stat.label}</span>
-            <span className="text-[10px] font-bold text-white/60 tracking-widest">{stat.status}</span>
+          <div key={i} className="bg-white p-6 rounded-[2rem] flex flex-col items-center gap-3 soft-shadow">
+            <stat.icon className="w-5 h-5 text-orange-500" />
+            <div className="text-center">
+              <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">{stat.label}</p>
+              <p className="text-[11px] font-bold text-gray-900">{stat.value}</p>
+            </div>
           </div>
         ))}
       </div>

@@ -26,33 +26,33 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Technical HUD Component
+// Clean HUD Component
 function ViewerHUD({ config }: { config: any }) {
   return (
-    <div className="absolute inset-0 pointer-events-none z-10 p-6 flex flex-col justify-between font-mono">
+    <div className="absolute inset-0 pointer-events-none z-10 p-8 flex flex-col justify-between font-sans">
       {/* Top HUD */}
       <div className="flex justify-between items-start">
         <div className="flex flex-col gap-4">
           <motion.div 
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="bg-[#0A0A0B]/80 border border-white/10 px-4 py-2 rounded flex items-center gap-3"
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="bg-white/80 backdrop-blur-md border border-gray-100 px-6 py-3 rounded-2xl flex items-center gap-4 soft-shadow pointer-events-auto"
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
-            <span className="text-[9px] font-bold text-white/80 tracking-widest uppercase">VIEWPORT_RENDER_ACTIVE</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
+            <span className="text-[10px] font-bold text-gray-900 uppercase tracking-widest">Live View</span>
           </motion.div>
           
           <div className="flex gap-2">
             {[Compass, Layers, Box].map((Icon, i) => (
-              <motion.div
+              <motion.button
                 key={i}
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: i * 0.05 }}
-                className="w-10 h-10 bg-[#0A0A0B]/80 border border-white/10 rounded flex items-center justify-center hover:bg-white/5 transition-colors pointer-events-auto cursor-pointer"
+                className="w-12 h-12 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl flex items-center justify-center hover:bg-white transition-all pointer-events-auto soft-shadow"
               >
-                <Icon className="w-4 h-4 text-white/30" />
-              </motion.div>
+                <Icon className="w-5 h-5 text-gray-400" />
+              </motion.button>
             ))}
           </div>
         </div>
@@ -61,38 +61,37 @@ function ViewerHUD({ config }: { config: any }) {
           <motion.div 
             initial={{ x: 10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="bg-[#0A0A0B]/80 border border-white/10 px-4 py-2 rounded flex items-center gap-3"
+            className="bg-white/80 backdrop-blur-md border border-gray-100 px-6 py-3 rounded-2xl flex items-center gap-4 soft-shadow pointer-events-auto"
           >
-            <Sparkles className="w-3.5 h-3.5 text-orange-500" />
-            <span className="text-[9px] font-bold text-white/80 tracking-widest uppercase">PRECISION_99.8%</span>
+            <Sparkles className="w-4 h-4 text-orange-500" />
+            <span className="text-[10px] font-bold text-gray-900 uppercase tracking-widest">High Detail</span>
           </motion.div>
-          <div className="text-[8px] text-white/20 tracking-widest uppercase">LATENCY: 12ms</div>
         </div>
       </div>
 
       {/* Bottom HUD */}
       <div className="flex justify-between items-end">
-        <div className="bg-[#0A0A0B]/80 border border-white/10 p-4 rounded flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Activity className="w-4 h-4 text-orange-500/60" />
+        <div className="bg-white/80 backdrop-blur-md border border-gray-100 p-6 rounded-[2rem] flex items-center gap-10 soft-shadow pointer-events-auto">
+          <div className="flex items-center gap-4">
+            <Activity className="w-5 h-5 text-orange-500" />
             <div>
-              <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">POLYGONS</p>
-              <p className="text-[10px] font-bold text-white/80 tracking-widest">124,502</p>
+              <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">Complexity</p>
+              <p className="text-sm font-bold text-gray-900">124k Polygons</p>
             </div>
           </div>
-          <div className="w-px h-6 bg-white/5" />
-          <div className="flex items-center gap-3">
-            <Zap className="w-4 h-4 text-orange-500/60" />
+          <div className="w-px h-10 bg-gray-100" />
+          <div className="flex items-center gap-4">
+            <Zap className="w-5 h-5 text-orange-500" />
             <div>
-              <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">ENGINE</p>
-              <p className="text-[10px] font-bold text-white/80 tracking-widest">NEURAL_v4</p>
+              <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">Engine</p>
+              <p className="text-sm font-bold text-gray-900">Smart v4</p>
             </div>
           </div>
         </div>
 
         <div className="flex gap-2">
-          <button className="w-10 h-10 bg-[#0A0A0B]/80 border border-white/10 rounded flex items-center justify-center pointer-events-auto hover:bg-white/10 transition-colors">
-            <Maximize2 className="w-4 h-4 text-white/60" />
+          <button className="w-12 h-12 bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl flex items-center justify-center pointer-events-auto hover:bg-white transition-all soft-shadow">
+            <Maximize2 className="w-5 h-5 text-gray-400" />
           </button>
         </div>
       </div>
@@ -100,7 +99,7 @@ function ViewerHUD({ config }: { config: any }) {
   );
 }
 
-// Technical Scene Component
+// Scene Component
 function Scene({ config }: { config: any }) {
   const meshRef = useRef<THREE.Group>(null);
 
@@ -122,8 +121,8 @@ function Scene({ config }: { config: any }) {
       />
 
       {/* Lighting */}
-      <ambientLight intensity={0.2} />
-      <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={1.5} castShadow />
+      <ambientLight intensity={config.ambient ? 0.8 : 0.2} />
+      <spotLight position={[10, 15, 10]} angle={0.3} penumbra={1} intensity={1.5} castShadow={config.shadows} />
       <pointLight position={[-10, -10, -10]} intensity={0.5} />
       
       <Environment preset="city" />
@@ -134,13 +133,7 @@ function Scene({ config }: { config: any }) {
           {/* Base Plate */}
           <mesh castShadow receiveShadow>
             <boxGeometry args={[10, 0.1, 14]} />
-            <meshStandardMaterial color="#121214" roughness={0.2} metalness={0.8} />
-          </mesh>
-
-          {/* Technical Grid Overlay on Mesh */}
-          <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[10, 14]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.05} wireframe />
+            <meshStandardMaterial color="#ffffff" roughness={0.1} metalness={0.1} />
           </mesh>
 
           {/* Mock Walls */}
@@ -157,8 +150,8 @@ function Scene({ config }: { config: any }) {
                 color={config.materials ? "#fb923c" : "#ffffff"} 
                 wireframe={config.wireframe}
                 transparent
-                opacity={0.8}
-                metalness={0.5}
+                opacity={0.9}
+                metalness={0.1}
                 roughness={0.2}
               />
             </mesh>
@@ -173,15 +166,15 @@ function Scene({ config }: { config: any }) {
         fadeStrength={5} 
         cellSize={1} 
         sectionSize={5} 
-        sectionColor="#ffffff" 
-        cellColor="#ffffff" 
+        sectionColor="#e5e7eb" 
+        cellColor="#f3f4f6" 
         sectionThickness={1}
         cellThickness={0.5}
       />
       
       <ContactShadows 
         position={[0, -0.01, 0]} 
-        opacity={0.6} 
+        opacity={0.4} 
         scale={30} 
         blur={2.5} 
         far={4} 
@@ -192,10 +185,7 @@ function Scene({ config }: { config: any }) {
 
 export function ThreeViewer({ data, config }: { data: any, config: any }) {
   return (
-    <div className="w-full h-full relative bg-[#0A0A0B]">
-      {/* Technical Grid Background */}
-      <div className="absolute inset-0 technical-grid opacity-10 pointer-events-none" />
-      
+    <div className="w-full h-full relative bg-gray-50">
       <ViewerHUD config={config} />
       
       <Canvas shadows dpr={[1, 2]} gl={{ antialias: true }}>
@@ -203,15 +193,6 @@ export function ThreeViewer({ data, config }: { data: any, config: any }) {
           <Scene config={config} />
         </Suspense>
       </Canvas>
-
-      {/* Scanning Effect Overlay */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-20 opacity-[0.05]">
-        <motion.div 
-          animate={{ top: ['-100%', '200%'] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          className="absolute left-0 right-0 h-40 bg-gradient-to-b from-transparent via-orange-500 to-transparent"
-        />
-      </div>
     </div>
   );
 }

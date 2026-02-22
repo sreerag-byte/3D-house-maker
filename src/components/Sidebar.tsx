@@ -4,12 +4,10 @@ import {
   UploadCloud, 
   FolderOpen, 
   Settings, 
-  Zap, 
+  MessageSquare, 
   LogOut, 
-  ChevronRight,
   Sparkles,
-  Palette,
-  Layout
+  LayoutGrid
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -26,27 +24,27 @@ interface SidebarProps {
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const navItems = [
-    { id: 'upload', icon: UploadCloud, label: 'CREATE', desc: 'New Space' },
-    { id: 'chat', icon: Zap, label: 'AI CHAT', desc: 'Chat to Build' },
-    { id: 'collection', icon: Layout, label: 'GALLERY', desc: 'Perfect Plans' },
-    { id: 'viewer', icon: Sparkles, label: 'STUDIO', desc: 'Magic View' },
-    { id: 'projects', icon: FolderOpen, label: 'ARCHIVE', desc: 'Saved' },
+    { id: 'upload', icon: UploadCloud, label: 'New', desc: 'Create space' },
+    { id: 'chat', icon: MessageSquare, label: 'Chat', desc: 'Ask AI' },
+    { id: 'collection', icon: LayoutGrid, label: 'Gallery', desc: 'Floor plans' },
+    { id: 'viewer', icon: Sparkles, label: 'View', desc: '3D Studio' },
+    { id: 'projects', icon: FolderOpen, label: 'Saved', desc: 'My projects' },
   ];
 
   return (
-    <aside className="w-20 h-full flex flex-col items-center py-6 z-50 relative bg-[#0A0A0B] border-r border-white/5">
+    <aside className="w-24 h-full flex flex-col items-center py-8 z-50 relative bg-white border-r border-gray-100 soft-shadow">
       {/* Logo Area */}
-      <div className="flex flex-col items-center mb-10 group cursor-pointer">
+      <div className="flex flex-col items-center mb-12 group cursor-pointer">
         <motion.div 
           whileHover={{ scale: 1.1 }}
-          className="w-12 h-12 rounded-lg bg-orange-500 flex items-center justify-center mb-2 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+          className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center mb-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)]"
         >
-          <Box className="w-6 h-6 text-black" />
+          <Box className="w-6 h-6 text-white" />
         </motion.div>
       </div>
 
       {/* Main Navigation */}
-      <nav className="flex-1 flex flex-col gap-4 w-full px-2">
+      <nav className="flex-1 flex flex-col gap-4 w-full px-3">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -56,43 +54,38 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveTab(item.id)}
                 className={cn(
-                  "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 relative",
+                  "w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all duration-300 relative",
                   isActive 
-                    ? "bg-white/10 text-orange-500 shadow-inner" 
-                    : "text-white/30 hover:text-white/60 hover:bg-white/5"
+                    ? "bg-orange-500 text-white shadow-[0_8px_20px_rgba(249,115,22,0.2)]" 
+                    : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                 )}
               >
                 <item.icon className="w-5 h-5" />
+                <span className="text-[8px] font-bold tracking-wider uppercase">{item.label}</span>
                 
                 {/* Tooltip */}
-                <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#18181B] text-white rounded border border-white/10 opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap z-50 shadow-2xl">
-                  <p className="text-[10px] font-mono font-bold tracking-widest">{item.label}</p>
+                <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 text-white rounded-lg opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                  <p className="text-[10px] font-bold">{item.desc}</p>
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
                 </div>
               </motion.button>
-              
-              {isActive && (
-                <motion.div 
-                  layoutId="active-indicator"
-                  className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"
-                />
-              )}
             </div>
           );
         })}
       </nav>
 
       {/* Secondary Actions & Profile */}
-      <div className="mt-auto flex flex-col gap-4 items-center w-full px-2">
+      <div className="mt-auto flex flex-col gap-4 items-center w-full px-3">
         {/* Settings Button */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setActiveTab('settings')}
           className={cn(
-            "w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 relative",
+            "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 relative",
             activeTab === 'settings'
-              ? "bg-white/10 text-orange-500"
-              : "text-white/30 hover:text-white/60 hover:bg-white/5"
+              ? "bg-gray-100 text-gray-900"
+              : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
           )}
         >
           <Settings className="w-5 h-5" />
@@ -102,16 +95,16 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <div className="relative group w-10 h-10">
           <motion.div 
             whileHover={{ scale: 1.05 }}
-            className="w-full h-full rounded-lg bg-white/5 flex items-center justify-center cursor-pointer overflow-hidden border border-white/10"
+            className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center cursor-pointer overflow-hidden border-2 border-white shadow-sm hover:border-orange-500 transition-colors"
           >
-            <img src="https://picsum.photos/seed/designer/120/120" alt="User" className="w-full h-full object-cover opacity-80" referrerPolicy="no-referrer" />
+            <img src="https://picsum.photos/seed/designer/120/120" alt="User" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </motion.div>
         </div>
 
         {/* Logout */}
         <motion.button
           whileHover={{ scale: 1.05 }}
-          className="w-12 h-12 rounded-lg flex items-center justify-center text-white/20 hover:text-red-500/60 transition-all"
+          className="w-12 h-12 rounded-2xl flex items-center justify-center text-gray-300 hover:text-red-500 transition-all"
         >
           <LogOut className="w-5 h-5" />
         </motion.button>
