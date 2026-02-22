@@ -1,26 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sun, 
   Moon, 
-  Maximize2, 
-  Minimize2, 
   Box, 
-  Grid, 
-  Camera, 
-  Download, 
-  Trash2, 
-  RotateCcw,
-  Ruler,
-  Type,
-  Eye,
+  Maximize, 
+  Layers, 
+  Eye, 
   EyeOff,
-  Wind,
   Zap,
+  Activity,
+  Download,
+  Share2,
   Palette,
-  Compass,
-  Map,
-  Share2
+  Sparkles,
+  Smile,
+  Coffee,
+  Heart,
+  Grid
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -33,93 +31,165 @@ interface ControlPanelProps {
   setConfig: (config: any) => void;
 }
 
+const logs = [
+  "Waking up the magic...",
+  "Finding the walls...",
+  "Painting with 3D pixels...",
+  "Adding a pinch of love...",
+  "Ready for you!",
+  "Sparkling up the view...",
+];
+
 export function ControlPanel({ config, setConfig }: ControlPanelProps) {
+  const [activeLogs, setActiveLogs] = useState<string[]>([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const randomLog = logs[Math.floor(Math.random() * logs.length)];
+      setActiveLogs(prev => [randomLog, ...prev].slice(0, 5));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleConfig = (key: string) => {
     setConfig({ ...config, [key]: !config[key] });
   };
 
-  const FeatureItem = ({ icon: Icon, label, active, onClick }: any) => (
+  return (
+    <aside className="w-96 h-full flex flex-col gap-8 z-40 overflow-hidden">
+      {/* Main Controls */}
+      <div className="glass-panel rounded-[3rem] p-10 deep-depth border-white/60">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center shadow-lg">
+            <Smile className="text-white w-7 h-7" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-display font-black text-amber-900 tracking-tight">Magic Wand</h3>
+            <p className="text-[10px] font-bold text-amber-900/40 uppercase tracking-widest">Tweak your view</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <FeatureItem 
+            icon={Sun} 
+            label="Sunlight" 
+            active={config.daylight} 
+            onClick={() => toggleConfig('daylight')} 
+          />
+          <FeatureItem 
+            icon={Grid} 
+            label="Skeleton" 
+            active={config.wireframe} 
+            onClick={() => toggleConfig('wireframe')} 
+          />
+          <FeatureItem 
+            icon={Moon} 
+            label="Shadows" 
+            active={config.shadows} 
+            onClick={() => toggleConfig('shadows')} 
+          />
+          <FeatureItem 
+            icon={Maximize} 
+            label="Flat View" 
+            active={config.ortho} 
+            onClick={() => toggleConfig('ortho')} 
+          />
+          <FeatureItem 
+            icon={Palette} 
+            label="Colors" 
+            active={config.materials} 
+            onClick={() => toggleConfig('materials')} 
+          />
+          <FeatureItem 
+            icon={Sparkles} 
+            label="Glow" 
+            active={config.ambient} 
+            onClick={() => toggleConfig('ambient')} 
+          />
+        </div>
+
+        <div className="mt-10 space-y-4">
+          <button className="w-full py-5 bg-amber-900 text-white text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-orange-600 transition-colors shadow-lg flex items-center justify-center gap-3">
+            <Download className="w-4 h-4" />
+            Save as .GLB
+          </button>
+          <button className="w-full py-5 bg-white text-amber-900 text-xs font-black uppercase tracking-widest rounded-2xl hover:bg-amber-50 transition-colors deep-depth flex items-center justify-center gap-3">
+            <Share2 className="w-4 h-4" />
+            Share Link
+          </button>
+        </div>
+      </div>
+
+      {/* Stats/Log Panel */}
+      <div className="flex-1 glass-panel rounded-[3rem] p-10 deep-depth border-white/60 flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Activity className="w-5 h-5 text-orange-500" />
+            <h4 className="text-sm font-black text-amber-900 uppercase tracking-widest">What's Happening</h4>
+          </div>
+          <div className="px-3 py-1 bg-white/40 rounded-full">
+            <span className="text-[8px] font-black text-amber-900 uppercase tracking-widest">Live</span>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+          <AnimatePresence mode="popLayout">
+            {activeLogs.map((log, i) => (
+              <motion.div
+                key={log + i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                className="flex gap-4 group"
+              >
+                <div className="w-1 h-auto bg-orange-500/20 rounded-full group-hover:bg-orange-500 transition-colors" />
+                <div>
+                  <p className="text-xs font-bold text-amber-900 leading-relaxed">{log}</p>
+                  <p className="text-[9px] font-bold text-amber-900/20 uppercase tracking-widest mt-1">Just now</p>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-amber-900/10">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-black text-amber-900/40 uppercase tracking-widest">Magic Level</span>
+            <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest">99%</span>
+          </div>
+          <div className="h-2 bg-amber-900/5 rounded-full overflow-hidden p-0.5">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: '99%' }}
+              className="h-full bg-orange-500 rounded-full"
+            />
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function FeatureItem({ icon: Icon, label, active, onClick }: any) {
+  return (
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 group relative overflow-hidden",
+        "flex flex-col items-center gap-3 p-6 rounded-[2rem] transition-all duration-500 group relative overflow-hidden",
         active 
-          ? "bg-orange-500/10 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
-          : "bg-white/5 border-white/5 text-slate-500 hover:border-white/20 hover:text-slate-200"
+          ? "bg-orange-500 text-white shadow-lg scale-105" 
+          : "bg-white/40 text-amber-900/40 hover:bg-white hover:text-amber-900"
       )}
     >
-      <Icon className={cn(
-        "w-5 h-5 mb-3 transition-transform duration-300 group-hover:scale-110",
-        active ? "drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" : ""
-      )} />
-      <span className="text-[8px] font-black uppercase tracking-[0.1em] text-center leading-none">{label}</span>
+      <Icon className={cn("w-6 h-6 transition-transform duration-500", active ? "text-white" : "text-amber-900/40 group-hover:text-amber-900")} />
+      <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
+      
       {active && (
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent pointer-events-none" />
+        <motion.div 
+          layoutId={`active-glow-${label}`}
+          className="absolute inset-0 bg-white/10 pointer-events-none"
+        />
       )}
     </button>
-  );
-
-  return (
-    <div className="w-full lg:w-80 h-full glass-panel flex flex-col overflow-y-auto custom-scrollbar z-30">
-      <div className="p-8 border-b border-white/5">
-        <h3 className="font-display font-black text-xs uppercase tracking-[0.3em] text-slate-400">System Parameters</h3>
-      </div>
-
-      <div className="p-8 space-y-10">
-        {/* Group 1: Visuals */}
-        <section>
-          <div className="flex items-center justify-between mb-5">
-            <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Rendering Engine</h4>
-            <div className="w-1 h-1 rounded-full bg-orange-500 animate-ping" />
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            <FeatureItem icon={Grid} label="Wireframe" active={config.wireframe} onClick={() => toggleConfig('wireframe')} />
-            <FeatureItem icon={Sun} label="Daylight" active={config.daylight} onClick={() => toggleConfig('daylight')} />
-            <FeatureItem icon={Moon} label="Night" active={!config.daylight} onClick={() => toggleConfig('daylight')} />
-            <FeatureItem icon={Zap} label="Shadows" active={config.shadows} onClick={() => toggleConfig('shadows')} />
-            <FeatureItem icon={Wind} label="Ambient" active={config.ambient} onClick={() => toggleConfig('ambient')} />
-            <FeatureItem icon={Eye} label="Edges" active={config.edges} onClick={() => toggleConfig('edges')} />
-          </div>
-        </section>
-
-        {/* Group 2: Tools */}
-        <section>
-          <h4 className="text-[9px] font-black text-slate-600 uppercase mb-5 tracking-[0.3em]">Analysis Suite</h4>
-          <div className="grid grid-cols-3 gap-3">
-            <FeatureItem icon={Ruler} label="Measure" active={config.measure} onClick={() => toggleConfig('measure')} />
-            <FeatureItem icon={Compass} label="North" active={config.north} onClick={() => toggleConfig('north')} />
-            <FeatureItem icon={Map} label="Terrain" active={config.terrain} onClick={() => toggleConfig('terrain')} />
-            <FeatureItem icon={Type} label="Labels" active={config.labels} onClick={() => toggleConfig('labels')} />
-            <FeatureItem icon={Palette} label="Materials" active={config.materials} onClick={() => toggleConfig('materials')} />
-            <FeatureItem icon={Box} label="Furniture" active={config.furniture} onClick={() => toggleConfig('furniture')} />
-          </div>
-        </section>
-
-        {/* Group 3: Viewport */}
-        <section>
-          <h4 className="text-[9px] font-black text-slate-600 uppercase mb-5 tracking-[0.3em]">Viewport Matrix</h4>
-          <div className="grid grid-cols-3 gap-3">
-            <FeatureItem icon={Camera} label="Capture" onClick={() => alert('Screenshot captured!')} />
-            <FeatureItem icon={RotateCcw} label="Reset" onClick={() => alert('Camera reset')} />
-            <FeatureItem icon={Maximize2} label="Focus" onClick={() => alert('Model focused')} />
-            <FeatureItem icon={Minimize2} label="Ortho" active={config.ortho} onClick={() => toggleConfig('ortho')} />
-            <FeatureItem icon={EyeOff} label="Hide UI" onClick={() => alert('UI hidden')} />
-            <FeatureItem icon={Share2} label="Share" onClick={() => alert('Link copied!')} />
-          </div>
-        </section>
-
-        {/* Group 4: Export */}
-        <section className="pt-6">
-          <button className="w-full py-4 bg-orange-500 hover:bg-orange-400 text-slate-950 text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl transition-all duration-300 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-3 active:scale-95">
-            <Download className="w-4 h-4" />
-            Export Neural Mesh
-          </button>
-          <button className="w-full py-4 mt-4 text-slate-500 hover:text-red-400 text-[9px] font-black uppercase tracking-[0.3em] transition-all duration-300 flex items-center justify-center gap-2">
-            <Trash2 className="w-3 h-3" />
-            Purge Workspace
-          </button>
-        </section>
-      </div>
-    </div>
   );
 }

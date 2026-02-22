@@ -1,5 +1,17 @@
-import React, { useState, useRef } from 'react';
-import { UploadCloud, FileImage, CheckCircle, Loader2, Zap } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { 
+  UploadCloud, 
+  FileText, 
+  CheckCircle2, 
+  AlertCircle, 
+  ArrowRight, 
+  Sparkles, 
+  Smile,
+  Heart,
+  Coffee,
+  Palette
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -12,169 +24,192 @@ interface UploadFormProps {
 }
 
 export function UploadForm({ onUploadSuccess }: UploadFormProps) {
-  const [planFile, setPlanFile] = useState<File | null>(null);
-  const [elevationFile, setElevationFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState(1);
 
-  const planInputRef = useRef<HTMLInputElement>(null);
-  const elevationInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'plan' | 'elevation') => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (type === 'plan') setPlanFile(file);
-      else setElevationFile(file);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0];
+    if (selected && selected.type.startsWith('image/')) {
+      setFile(selected);
+      setError(null);
+      setStep(2);
+    } else {
+      setError('Oops! Please pick a cool image file.');
     }
   };
 
   const handleUpload = async () => {
-    if (!planFile || !elevationFile) {
-      setError("Please select both a floor plan and an elevation image.");
-      return;
-    }
-
+    if (!file) return;
     setIsUploading(true);
-    setError(null);
+    setStep(3);
 
-    const formData = new FormData();
-    formData.append('plan', planFile);
-    formData.append('elevation', elevationFile);
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
-      const data = await response.json();
-      onUploadSuccess(data);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during upload.');
-    } finally {
-      setIsUploading(false);
+    // Simulate funky synthesis process
+    for (let i = 0; i <= 100; i += 2) {
+      setProgress(i);
+      await new Promise(r => setTimeout(r, 50));
     }
+
+    onUploadSuccess({
+      id: 'mock-id',
+      meshUrl: '/mock-mesh.glb',
+      metadata: { walls: 12, area: 150 }
+    });
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-12 glass-panel rounded-[2rem] relative overflow-hidden group">
-      <div className="absolute -right-20 -top-20 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors duration-700" />
+    <div className="glass-panel rounded-[4rem] p-16 deep-depth border-white/60 relative overflow-hidden">
+      <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/20 rounded-full blur-3xl" />
       
-      <div className="relative z-10 text-left mb-12">
-        <div className="inline-block px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full mb-4">
-          <p className="text-[8px] font-black text-orange-500 uppercase tracking-[0.4em]">Neural Processing Unit</p>
-        </div>
-        <h2 className="text-6xl font-display font-black tracking-tighter text-white mb-4 uppercase italic leading-none">
-          Initialize <span className="text-gradient">Scan</span>
-        </h2>
-        <p className="text-slate-400 font-mono text-[10px] uppercase tracking-[0.2em] leading-relaxed max-w-md">
-          Feed the engine with 2D architectural data to reconstruct high-fidelity volumetric geometry.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {/* Plan Upload */}
-        <div 
-          className={cn(
-            "relative flex flex-col items-center justify-center p-10 rounded-3xl border-2 border-dashed transition-all duration-500 cursor-pointer group/item",
-            planFile 
-              ? "bg-orange-500/10 border-orange-500/40 text-orange-400 shadow-[0_0_30px_rgba(249,115,22,0.1)]" 
-              : "bg-white/5 border-white/10 hover:border-orange-500/30 hover:bg-white/10"
-          )}
-          onClick={() => planInputRef.current?.click()}
-        >
-          <input 
-            type="file" 
-            ref={planInputRef} 
-            className="hidden" 
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, 'plan')}
-          />
-          {planFile ? (
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6">
-                <CheckCircle className="w-8 h-8" />
+      <div className="relative z-10 max-w-2xl mx-auto text-center">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              className="space-y-12"
+            >
+              <div className="w-32 h-32 rounded-[2.5rem] bg-orange-500 flex items-center justify-center mx-auto shadow-xl animate-float">
+                <UploadCloud className="text-white w-16 h-16" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] truncate w-full text-center px-4">{planFile.name}</span>
-              <span className="text-[8px] font-bold uppercase mt-2 opacity-50 tracking-widest">Footprint Vectorized</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center text-slate-400 group-hover/item:text-slate-200">
-              <UploadCloud className="w-12 h-12 mb-6 transition-transform duration-500 group-hover/item:-translate-y-2" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Floor Plan</span>
-              <span className="text-[8px] font-bold uppercase mt-2 opacity-30 tracking-widest">Top-Down View</span>
-            </div>
-          )}
-        </div>
-
-        {/* Elevation Upload */}
-        <div 
-          className={cn(
-            "relative flex flex-col items-center justify-center p-10 rounded-3xl border-2 border-dashed transition-all duration-500 cursor-pointer group/item",
-            elevationFile 
-              ? "bg-orange-500/10 border-orange-500/40 text-orange-400 shadow-[0_0_30px_rgba(249,115,22,0.1)]" 
-              : "bg-white/5 border-white/10 hover:border-orange-500/30 hover:bg-white/10"
-          )}
-          onClick={() => elevationInputRef.current?.click()}
-        >
-          <input 
-            type="file" 
-            ref={elevationInputRef} 
-            className="hidden" 
-            accept="image/*"
-            onChange={(e) => handleFileChange(e, 'elevation')}
-          />
-          {elevationFile ? (
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6">
-                <CheckCircle className="w-8 h-8" />
+              <div>
+                <h2 className="text-5xl font-display font-black text-amber-900 tracking-tight mb-4">Add New Space</h2>
+                <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">Pick a floor plan image to start the magic</p>
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] truncate w-full text-center px-4">{elevationFile.name}</span>
-              <span className="text-[8px] font-bold uppercase mt-2 opacity-50 tracking-widest">Height Analyzed</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center text-slate-400 group-hover/item:text-slate-200">
-              <FileImage className="w-12 h-12 mb-6 transition-transform duration-500 group-hover/item:-translate-y-2" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Elevation</span>
-              <span className="text-[8px] font-bold uppercase mt-2 opacity-30 tracking-widest">Frontal View</span>
-            </div>
+              
+              <label className="block group cursor-pointer">
+                <div className="border-4 border-dashed border-amber-900/10 rounded-[3rem] p-16 transition-all group-hover:border-orange-500/40 group-hover:bg-white/40">
+                  <div className="flex flex-col items-center gap-6">
+                    <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center deep-depth group-hover:scale-110 transition-transform">
+                      <Smile className="text-orange-500 w-8 h-8" />
+                    </div>
+                    <p className="text-lg font-black text-amber-900">Drop your plan here or click to browse</p>
+                    <p className="text-[10px] font-bold text-amber-900/20 uppercase tracking-widest">PNG, JPG or SVG (Max 10MB)</p>
+                  </div>
+                </div>
+                <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+              </label>
+            </motion.div>
           )}
-        </div>
+
+          {step === 2 && file && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="space-y-12"
+            >
+              <div className="relative w-64 h-64 mx-auto rounded-[3rem] overflow-hidden deep-depth border-8 border-white">
+                <img 
+                  src={URL.createObjectURL(file)} 
+                  alt="Preview" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-orange-500/20 mix-blend-overlay" />
+              </div>
+              
+              <div>
+                <h2 className="text-4xl font-display font-black text-amber-900 tracking-tight mb-2">{file.name}</h2>
+                <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">Looks great! Ready to build?</p>
+              </div>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep(1)}
+                  className="flex-1 py-6 bg-white text-amber-900 text-sm font-black uppercase tracking-widest rounded-3xl hover:bg-amber-50 transition-all deep-depth"
+                >
+                  Change it
+                </button>
+                <button 
+                  onClick={handleUpload}
+                  className="flex-[2] py-6 bg-amber-900 text-white text-sm font-black uppercase tracking-widest rounded-3xl hover:bg-orange-600 transition-all shadow-xl flex items-center justify-center gap-3"
+                >
+                  Build My Space
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-12"
+            >
+              <div className="relative w-48 h-48 mx-auto">
+                <svg className="w-full h-full rotate-[-90deg]">
+                  <circle
+                    cx="96"
+                    cy="96"
+                    r="80"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    className="text-amber-900/5"
+                  />
+                  <motion.circle
+                    cx="96"
+                    cy="96"
+                    r="80"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="12"
+                    strokeDasharray="502"
+                    animate={{ strokeDashoffset: 502 - (502 * progress) / 100 }}
+                    className="text-orange-500"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-4xl font-display font-black text-amber-900">{progress}%</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-4xl font-display font-black text-amber-900 tracking-tight">Doing the Magic...</h2>
+                <div className="flex items-center justify-center gap-3">
+                  <Sparkles className="w-5 h-5 text-orange-500 animate-pulse" />
+                  <p className="text-sm font-bold text-amber-900/40 uppercase tracking-widest">
+                    {progress < 25 && "Waking up the magic..."}
+                    {progress >= 25 && progress < 50 && "Finding the walls..."}
+                    {progress >= 50 && progress < 75 && "Painting with 3D pixels..."}
+                    {progress >= 75 && "Adding a pinch of love..."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                {[Sparkles, Palette, Coffee].map((Icon, i) => (
+                  <div key={i} className={cn(
+                    "p-6 rounded-3xl transition-all duration-500",
+                    progress > (i + 1) * 30 ? "bg-orange-500 text-white shadow-lg" : "bg-white/40 text-amber-900/20"
+                  )}>
+                    <Icon className="w-6 h-6 mx-auto" />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-4 bg-red-50 rounded-2xl flex items-center gap-3 text-red-600"
+          >
+            <AlertCircle className="w-5 h-5" />
+            <span className="text-xs font-bold uppercase tracking-widest">{error}</span>
+          </motion.div>
+        )}
       </div>
-
-      {error && (
-        <div className="mb-8 p-5 bg-red-500/10 border border-red-500/20 text-red-400 font-black text-[10px] uppercase tracking-[0.2em] text-center rounded-2xl">
-          {error}
-        </div>
-      )}
-
-      <button
-        onClick={handleUpload}
-        disabled={!planFile || !elevationFile || isUploading}
-        className={cn(
-          "w-full py-6 rounded-2xl font-black text-slate-950 uppercase tracking-[0.4em] transition-all duration-500 flex items-center justify-center gap-4 text-xs overflow-hidden relative",
-          (!planFile || !elevationFile || isUploading)
-            ? "bg-slate-800 text-slate-500 cursor-not-allowed"
-            : "bg-orange-500 hover:bg-orange-400 shadow-lg shadow-orange-500/20 active:scale-[0.98]"
-        )}
-      >
-        {isUploading ? (
-          <>
-            <Loader2 className="w-5 h-5 animate-spin" />
-            Synthesizing Mesh...
-          </>
-        ) : (
-          <>
-            <Zap className="w-4 h-4" />
-            Execute Reconstruction
-          </>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-1000" />
-      </button>
     </div>
   );
 }
