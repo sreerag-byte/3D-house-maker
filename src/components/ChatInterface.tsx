@@ -62,11 +62,11 @@ export function ChatInterface() {
   return (
     <div className="h-full flex flex-col max-w-5xl mx-auto w-full">
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Design Chat</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Design Chat</h2>
         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Talk to your AI assistant</p>
       </div>
 
-      <div className="flex-1 bg-white border border-gray-100 rounded-[2.5rem] overflow-hidden flex flex-col mb-4 soft-shadow">
+      <div className="flex-1 bg-white dark:bg-[#0A0A0B] border border-gray-100 dark:border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col mb-4 soft-shadow">
         <div 
           ref={scrollRef}
           className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar"
@@ -85,7 +85,7 @@ export function ChatInterface() {
                 <div className={cn(
                   "px-6 py-4 rounded-[1.5rem] text-sm leading-relaxed max-w-[80%]",
                   msg.role === 'assistant' 
-                    ? "bg-gray-50 text-gray-800" 
+                    ? "bg-gray-50 dark:bg-white/5 text-gray-800 dark:text-gray-200" 
                     : "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
                 )}>
                   {msg.content}
@@ -105,7 +105,7 @@ export function ChatInterface() {
           )}
         </div>
 
-        <div className="p-6 bg-gray-50/50 border-t border-gray-100">
+        <div className="p-6 bg-gray-50/50 dark:bg-white/5 border-t border-gray-100 dark:border-white/5">
           <div className="relative flex items-center gap-4">
             <input
               type="text"
@@ -113,14 +113,14 @@ export function ChatInterface() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask me anything about your design..."
-              className="flex-1 bg-white h-14 px-8 rounded-2xl border border-gray-200 text-sm font-medium text-gray-900 placeholder:text-gray-300 focus:outline-none focus:border-orange-500/50 transition-all shadow-sm"
+              className="flex-1 bg-white dark:bg-white/5 h-14 px-8 rounded-2xl border border-gray-200 dark:border-white/10 text-sm font-medium text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-white/20 focus:outline-none focus:border-orange-500/50 transition-all shadow-sm"
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
-              className="h-14 px-8 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-gray-800 transition-all"
+              className="h-14 px-8 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-bold uppercase tracking-widest rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-all"
             >
               Send
             </motion.button>
@@ -137,9 +137,9 @@ export function ChatInterface() {
         ].map((suggestion, i) => (
           <motion.button
             key={i}
-            whileHover={{ scale: 1.02, backgroundColor: "#fff" }}
+            whileHover={{ scale: 1.02, backgroundColor: "var(--suggestion-hover)" }}
             onClick={() => setInput(suggestion)}
-            className="px-5 py-2.5 bg-white border border-gray-100 text-[11px] font-bold text-gray-500 uppercase tracking-wider rounded-xl transition-all whitespace-nowrap shadow-sm"
+            className="px-5 py-2.5 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider rounded-xl transition-all whitespace-nowrap shadow-sm"
           >
             {suggestion}
           </motion.button>

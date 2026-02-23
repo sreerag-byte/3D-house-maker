@@ -47,13 +47,13 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
   return (
     <aside className="w-80 h-full flex flex-col gap-6 z-40 overflow-hidden">
       {/* Parameters Panel */}
-      <div className="bg-white border border-gray-100 rounded-[2.5rem] p-8 flex flex-col soft-shadow flex-1">
+      <div className="bg-white dark:bg-[#0A0A0B] border border-gray-100 dark:border-white/5 rounded-[2.5rem] p-8 flex flex-col soft-shadow flex-1">
         <div className="flex items-center gap-4 mb-10">
           <div className="w-10 h-10 rounded-2xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/20">
             <Settings className="text-white w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900 tracking-tight">Studio Controls</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Studio Controls</h3>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Adjust your view</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
                   "flex flex-col items-center justify-center gap-2 h-24 rounded-2xl border transition-all relative overflow-hidden",
                   isActive 
                     ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20" 
-                    : "bg-gray-50 border-gray-100 text-gray-400 hover:border-gray-200"
+                    : "bg-gray-50 dark:bg-white/5 border-gray-100 dark:border-white/5 text-gray-400 hover:border-gray-200 dark:hover:border-white/10"
                 )}
               >
                 <item.icon className="w-5 h-5" />
@@ -81,12 +81,12 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
           })}
         </div>
 
-        <div className="mt-10 pt-8 border-t border-gray-50">
+        <div className="mt-10 pt-8 border-t border-gray-50 dark:border-white/5">
           <div className="flex items-center justify-between mb-4">
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quality</span>
-            <span className="text-[10px] font-bold text-gray-900 uppercase tracking-widest">High</span>
+            <span className="text-[10px] font-bold text-gray-900 dark:text-white uppercase tracking-widest">High</span>
           </div>
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: '85%' }}
@@ -97,7 +97,7 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
       </div>
 
       {/* Export Panel */}
-      <div className="bg-gray-900 p-8 rounded-[2.5rem] shadow-2xl">
+      <div className="bg-gray-900 dark:bg-black p-8 rounded-[2.5rem] shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
@@ -106,10 +106,10 @@ export function ControlPanel({ config, setConfig }: ControlPanelProps) {
           <Download className="w-4 h-4 text-white/40" />
         </div>
         <div className="space-y-3">
-          <button className="w-full py-4 bg-white text-gray-900 text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-gray-100 transition-all shadow-lg">
+          <button className="w-full py-4 bg-white dark:bg-white/10 text-gray-900 dark:text-white text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-gray-100 dark:hover:bg-white/20 transition-all shadow-lg">
             Download .GLB
           </button>
-          <button className="w-full py-4 bg-white/10 text-white text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-white/20 transition-all">
+          <button className="w-full py-4 bg-white/10 dark:bg-white/5 text-white text-[10px] font-bold uppercase tracking-widest rounded-2xl hover:bg-white/20 dark:hover:bg-white/10 transition-all">
             Share Link
           </button>
         </div>

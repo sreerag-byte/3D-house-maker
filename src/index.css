@@ -8,17 +8,21 @@
 
 @layer base {
   body {
-    @apply bg-[#F8F9FA] text-gray-900 antialiased overflow-hidden selection:bg-orange-500/20;
+    @apply bg-[#F8F9FA] text-gray-900 antialiased overflow-hidden selection:bg-orange-500/20 transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-[#0A0A0B] text-gray-100;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20;
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 dark:bg-black/40 dark:border-white/5;
   }
 
   .glass-card {
-    @apply bg-white/50 backdrop-blur-md border border-white/30 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-white/50 backdrop-blur-md border border-white/30 shadow-sm hover:shadow-md transition-all duration-300 dark:bg-white/5 dark:border-white/10;
   }
 
   .soft-shadow {
